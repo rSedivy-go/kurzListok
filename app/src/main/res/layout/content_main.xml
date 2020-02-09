@@ -75,7 +75,26 @@
                 android:spinnerMode="dialog" />
 
         </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:padding="20dip"
+                android:text="@string/CZK" />
+
+            <TextView
+                android:textColor="#000"
+                android:textStyle="bold"
+                android:text="@string/_1_czk"
+                android:id="@+id/hodnota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2" />
+        </TableRow>
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">

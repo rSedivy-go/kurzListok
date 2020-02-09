@@ -23,4 +23,6 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="hodnota">Hodnota</string>
     <string name="nula">0 CZK</string>
+    <string name="CZK">1 CZK =</string>
+    <string name="_1_czk">1 CZK</string>
 </resources>

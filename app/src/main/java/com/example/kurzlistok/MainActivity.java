@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity  {
     private HashMap<String, Double> zobrazListok = new HashMap<String, Double>();
     SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd");
+    String aktualVyber = "null";
     Date aktualDatum;
     Date zobrazDatum;
     DatePickerDialog datePickerDialog;
@@ -87,13 +88,13 @@ public class MainActivity extends AppCompatActivity  {
                 int day = cldr.get(Calendar.DAY_OF_MONTH);
                 int month = cldr.get(Calendar.MONTH);
                 int year = cldr.get(Calendar.YEAR);
-                // date picker dialog
                 picker = new DatePickerDialog(MainActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                                eText.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                                String datum = year + "-" + (monthOfYear) + "-" + dayOfMonth;
+                                eText.setText(datum);
+                                jsonParse(datum);
                             }
                         }, year, month, day);
                 picker.show();
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity  {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+
                     setDropdownMenu(aktualListok);
                     TextView tw = findViewById(R.id.workingDay);
                     tw.setText(dateFormat.format(aktualDatum));
@@ -156,7 +158,15 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                Toast.makeText(getApplicationContext(), (String) parent.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
+                try {
+                    Toast.makeText(getApplicationContext(), (String) parent.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
+                    Double suma = aktualListok.get((String) parent.getItemAtPosition(position));
+                    String sb = suma.toString() +" " + (String) parent.getItemAtPosition(position);
+                    ((TextView)findViewById(R.id.hodnota)).setText(sb);
+                }catch (Exception e){
+
+                }
+
             }
 
             @Override
