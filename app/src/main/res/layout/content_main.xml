@@ -113,21 +113,42 @@
                 android:layout_column="2">
 
                 <RadioButton
-
+                    android:id="@+id/zCZK"
+                    android:onClick="onRadioButtonClicked"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="true"
+                    android:checked="false"
                     android:text="z CZK" />
 
                 <RadioButton
+                    android:id="@+id/doCZK"
+                    android:onClick="onRadioButtonClicked"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="do CZK" />
             </RadioGroup>
 
 
         </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/vysledok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/nula"
+                android:textColor="#000"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+
+        </TableRow>
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -140,33 +161,22 @@
                 android:text="@string/hodnota" />
 
             <EditText
+                android:text="0"
                 android:id="@+id/editTextHodnota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:ems="10"
                 android:inputType="number" />
-
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
             <TextView
-                android:id="@+id/vysledok"
+                android:id="@+id/menaZ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:padding="20dip"
-                android:text="@string/nula"
-                android:textColor="#000"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
+                android:layout_marginEnd="20dp"
+                android:text="CZK" />
 
         </TableRow>
+
+
     </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
