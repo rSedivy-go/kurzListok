@@ -10,10 +10,8 @@
 
 
     <TableLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:stretchColumns="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="1dp">
@@ -34,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Enter Date" />
+                android:hint="Vyber dátum" />
 
 
         </TableRow>
@@ -94,6 +92,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="2" />
+            <Button
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="3"
+                android:text="Edit" />
+
+
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -165,14 +171,13 @@
                 android:id="@+id/editTextHodnota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
                 android:ems="10"
                 android:inputType="number" />
             <TextView
+                android:layout_column="3"
                 android:id="@+id/menaZ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
                 android:text="CZK" />
 
         </TableRow>

@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import android.text.Editable;
 import android.text.InputType;
@@ -41,6 +42,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,7 +60,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
-    private HashMap<String, Double> aktualListok = new HashMap<String, Double>();
+    private HashMap<String, Double> aktualSavedListok = new HashMap<String, Double>();
     private HashMap<String, Double> zobrazListok = new HashMap<String, Double>();
     SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd");
@@ -67,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
     String aktualMenaDo = "CZK";
     Date aktualDatum;
     Date zobrazDatum;
-    DatePickerDialog datePickerDialog;
     SharedPreferences sharedPreferences;
     private RequestQueue mQueue;
     DatePickerDialog picker;
@@ -82,17 +85,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+
         zobrazListok.put("CZK", 1.0);
+        try {
+            aktualSavedListok = loadMap();
+
+        } catch (Exception e) {
+            aktualSavedListok = zobrazListok;
+        }
+        try {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String datum = sharedPreferences.getString("datum", "null");
+            zobrazDatum = aktualDatum = dateFormat.parse(datum);
+            ((TextView) findViewById(R.id.workingDay)).setText(dateFormat.format(zobrazDatum));
+        } catch (Exception e) {
+        }
+
+
         setDropdownMenu(zobrazListok);
         mQueue = Volley.newRequestQueue(this);
+        InputStream in;
 
         context = getApplicationContext();
         eText = (EditText) findViewById(R.id.editText1);
@@ -123,6 +136,14 @@ public class MainActivity extends AppCompatActivity {
                 picker.show();
             }
         });
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                jsonParse("latest");
+                eText.setText("");
+            }
+        });
         EditText field1 = (EditText) findViewById(R.id.editTextHodnota);
         textViewVysledok = (TextView) findViewById(R.id.vysledok);
         textViewMenaZ = (TextView) findViewById(R.id.menaZ);
@@ -146,21 +167,19 @@ public class MainActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         textViewVysledok.setText("Vyskytla sa chyba");
                     }
-
-
             }
         });
-        try {
-          aktualListok = loadMap();
-        } catch (Exception e){
 
-        }
         jsonParse("latest");
     }
 
     @Override
     protected void onStop() {
-        saveMap(aktualListok);
+        mQueue.getCache().clear();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("datum", dateFormat.format(aktualDatum));
+        editor.commit();
+        saveMap(aktualSavedListok);
         super.onStop();
     }
 
@@ -174,10 +193,10 @@ public class MainActivity extends AppCompatActivity {
             DecimalFormat df2 = new DecimalFormat("#.##");
             String hodnota;
             if (doCZK) {
-                hodnota = String.valueOf(df2.format(s / aktualListok.get(zvolenaMena)));
+                hodnota = String.valueOf(df2.format(s / zobrazListok.get(zvolenaMena)));
                 hodnota = hodnota + " " + aktualMenaDo;
             } else {
-                hodnota = String.valueOf(df2.format(s * aktualListok.get(zvolenaMena)));
+                hodnota = String.valueOf(df2.format(s * zobrazListok.get(zvolenaMena)));
                 hodnota = hodnota + " " + aktualMenaDo;
             }
             textViewMenaZ.setText(aktualMenaZ);
@@ -192,29 +211,34 @@ public class MainActivity extends AppCompatActivity {
     private void jsonParse(String url) {
         //2010-01-13
         //latest
-        url = "https://api.exchangeratesapi.io/" + url + "?base=CZK";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                "https://api.exchangeratesapi.io/" + url + "?base=CZK",
+                null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Toast.makeText(getApplicationContext(), "loaded", Toast.LENGTH_SHORT).show();
                     JSONObject rates = response.getJSONObject("rates");
                     Iterator keysToCopyIterator = rates.keys();
+                    zobrazListok.clear();
                     while (keysToCopyIterator.hasNext()) {
                         String key = (String) keysToCopyIterator.next();
-                        aktualListok.put(key, Double.valueOf(rates.getString(key)));
+                        zobrazListok.put(key, Double.valueOf(rates.getString(key)));
                     }
                     try {
-                        aktualDatum = dateFormat.parse(response.getString("date"));
+                        zobrazDatum = dateFormat.parse(response.getString("date"));
+                        if (aktualDatum == null || aktualDatum.before(zobrazDatum)) {
+                            aktualDatum = zobrazDatum;
+                            aktualSavedListok = zobrazListok;
+                        }
 
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
 
-                    setDropdownMenu(aktualListok);
-                    zvolenaMena = aktualListok.keySet().toArray()[0].toString();
+                    setDropdownMenu(zobrazListok);
+                    zvolenaMena = zobrazListok.keySet().toArray()[0].toString();
                     TextView tw = findViewById(R.id.workingDay);
-                    tw.setText(dateFormat.format(aktualDatum));
+                    tw.setText(dateFormat.format(zobrazDatum));
                     if (doCZK) {
                         aktualMenaDo = "CZK";
                         aktualMenaZ = zvolenaMena;
@@ -223,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
                         aktualMenaZ = "CZK";
                     }
                     calc();
+                    Toast.makeText(getApplicationContext(), "loaded", Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Error at games feed", Toast.LENGTH_SHORT).show();
@@ -233,10 +258,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Error at games feed", Toast.LENGTH_SHORT).show();
-                setDropdownMenu(aktualListok);
-                zvolenaMena = aktualListok.keySet().toArray()[0].toString();
-                TextView tw = findViewById(R.id.workingDay);
-//                tw.setText(dateFormat.format(aktualDatum));
+                zobrazListok = aktualSavedListok;
+                setDropdownMenu(zobrazListok);
+                zvolenaMena = zobrazListok.keySet().toArray()[0].toString();
+                try {
+                    ((TextView) findViewById(R.id.workingDay)).setText(dateFormat.format(zobrazDatum));
+                } catch (Exception e) {
+                }
+                int i = 0;
                 if (doCZK) {
                     aktualMenaDo = "CZK";
                     aktualMenaZ = zvolenaMena;
@@ -252,10 +281,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
 
-        // Check which radio button was clicked
         switch (view.getId()) {
             case R.id.zCZK:
                 if (checked) {
@@ -266,7 +293,6 @@ public class MainActivity extends AppCompatActivity {
                     doCZK = false;
                     calc();
                 }
-
                 break;
             case R.id.doCZK:
                 if (checked) {
@@ -297,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                                        int position, long id) {
                 try {
                     zvolenaMena = (String) parent.getItemAtPosition(position);
-                    Double suma = aktualListok.get(zvolenaMena);
+                    Double suma = zobrazListok.get(zvolenaMena);
                     String sb = suma.toString() + " " + zvolenaMena;
                     ((TextView) findViewById(R.id.hodnota)).setText(sb);
                     if (doCZK) {
@@ -342,9 +368,10 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    private void saveMap(Map<String,Double> inputMap){
+
+    private void saveMap(Map<String, Double> inputMap) {
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("MyVariables", Context.MODE_PRIVATE);
-        if (pSharedPref != null){
+        if (pSharedPref != null) {
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
             SharedPreferences.Editor editor = pSharedPref.edit();
@@ -354,21 +381,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private HashMap<String,Double> loadMap(){
-        HashMap<String,Double> outputMap = new HashMap<String,Double>();
+    private HashMap<String, Double> loadMap() {
+        HashMap<String, Double> outputMap = new HashMap<String, Double>();
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("MyVariables", Context.MODE_PRIVATE);
-        try{
-            if (pSharedPref != null){
+        try {
+            if (pSharedPref != null) {
                 String jsonString = pSharedPref.getString("My_map", (new JSONObject()).toString());
                 JSONObject jsonObject = new JSONObject(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
-                while(keysItr.hasNext()) {
+                while (keysItr.hasNext()) {
                     String key = keysItr.next();
                     Double value = (Double) jsonObject.get(key);
                     outputMap.put(key, value);
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return outputMap;
