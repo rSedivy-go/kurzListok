@@ -3,6 +3,7 @@ package com.example.kurzlistok;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -17,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-
         zobrazListok.put("CZK", 1.0);
         try {
             aktualSavedListok = loadMap();
@@ -142,6 +143,18 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 jsonParse("latest");
                 eText.setText("");
+            }
+        });
+        TextView tv = (TextView) findViewById(R.id.hodnota);
+        tv.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                intent.putExtra("mena", zvolenaMena);
+                intent.putExtra("hodnota", zobrazListok.get(zvolenaMena).toString());
+                startActivityForResult(intent, 666);
+
             }
         });
         EditText field1 = (EditText) findViewById(R.id.editTextHodnota);
@@ -353,6 +366,20 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (resultCode == 666) {
+            try {
+                zobrazListok.remove(data.getStringExtra("mena"));
+                zobrazListok.put(data.getStringExtra("mena"), Double.valueOf( data.getStringExtra("hodnota")));
+            } catch (Exception e) {
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

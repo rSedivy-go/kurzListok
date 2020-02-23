@@ -8,180 +8,201 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="1dp">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
 
-        <TableRow
+    <TextView
+        android:id="@+id/twDatum"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:gravity="center"
+        android:padding="20dip"
+        android:text="@string/datum"
+        app:layout_constraintBottom_toBottomOf="@id/editText1"
+        app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Vyber dátum"
+        app:layout_constraintBottom_toBottomOf="@+id/twDatum"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/editText1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
+        android:padding="20dp"
+        android:id="@+id/twKurzZoDna"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:gravity="center"
+        android:text="@string/workingDay" />
+
+    <TextView
+        app:layout_constraintStart_toEndOf="@id/guidelineLeft"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintTop_toBottomOf="@id/editText1"
+        app:layout_constraintBottom_toBottomOf="@id/twKurzZoDna"
+
+        android:id="@+id/workingDay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="2" />
+
+    <TextView
+        android:id="@+id/twMena"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:gravity="center"
+        android:padding="20dip"
+        android:text="@string/mena"
+        app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twKurzZoDna" />
+
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:spinnerMode="dialog"
+        app:layout_constraintBottom_toBottomOf="@+id/twMena"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/twKurzZoDna" />
+
+    <TextView
+        android:padding="20dip"
+        android:id="@+id/twCZE"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:gravity="center"
+        android:text="@string/CZK"
+        app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twMena" />
+
+    <TextView
+        android:id="@+id/hodnota"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="2"
+        android:text="@string/_1_czk"
+        android:textColor="#000"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/twCZE"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/twMena" />
+
+    <TextView
+        android:padding="20dip"
+        app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twCZE"
+        app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
+        android:id="@+id/twPrepocet"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:text="@string/prepocet" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/twCZE"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="2">
+
+        <RadioButton
+            android:id="@+id/zCZK"
+            android:onClick="onRadioButtonClicked"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="z CZK" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="20dip"
-                android:text="@string/datum" />
-
-            <EditText
-                android:id="@+id/editText1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Vyber dátum" />
-
-
-        </TableRow>
-
-        <TableRow
+        <RadioButton
+            android:id="@+id/doCZK"
+            android:onClick="onRadioButtonClicked"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="do CZK" />
+    </RadioGroup>
+    <TextView
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        android:id="@+id/vysledok"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="2"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/nula"
+        android:textColor="#000"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="20dip"
-                android:text="@string/workingDay" />
+    <TextView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/vysledok"
+        android:gravity="center"
+        android:padding="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:text="@string/hodnota" />
 
-            <TextView
-                android:id="@+id/workingDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="2" />
-        </TableRow>
+    <EditText
+        app:layout_constraintStart_toEndOf="@id/guidelineLeft"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
+        app:layout_constraintTop_toBottomOf="@+id/vysledok"
+        android:text="0"
+        android:id="@+id/editTextHodnota"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="20dip"
-                android:text="@string/mena" />
-
-            <Spinner
-                android:id="@+id/spinner1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog" />
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="20dip"
-                android:text="@string/CZK" />
-
-            <TextView
-                android:textColor="#000"
-                android:textStyle="bold"
-                android:text="@string/_1_czk"
-                android:id="@+id/hodnota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="2" />
-            <Button
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_column="3"
-                android:text="Edit" />
-
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="20dip"
-                android:text="@string/prepocet" />
-
-            <RadioGroup
-
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_column="2">
-
-                <RadioButton
-                    android:id="@+id/zCZK"
-                    android:onClick="onRadioButtonClicked"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="z CZK" />
-
-                <RadioButton
-                    android:id="@+id/doCZK"
-                    android:onClick="onRadioButtonClicked"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="do CZK" />
-            </RadioGroup>
-
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/vysledok"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="@string/nula"
-                android:textColor="#000"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:padding="20dip"
-                android:text="@string/hodnota" />
-
-            <EditText
-                android:text="0"
-                android:id="@+id/editTextHodnota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number" />
-            <TextView
-                android:layout_column="3"
-                android:id="@+id/menaZ"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CZK" />
-
-        </TableRow>
-
-
-    </TableLayout>
+    <TextView
+        android:id="@+id/menaZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="3"
+        android:gravity="center"
+        android:text="CZK"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextHodnota"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guidelineRight"
+        app:layout_constraintTop_toTopOf="@+id/editTextHodnota" />
 </androidx.constraintlayout.widget.ConstraintLayout>
