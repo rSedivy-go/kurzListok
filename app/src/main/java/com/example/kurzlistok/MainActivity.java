@@ -1,6 +1,5 @@
 package com.example.kurzlistok;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +13,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,27 +22,23 @@ import androidx.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,12 +46,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private HashMap<String, Double> aktualSavedListok = new HashMap<String, Double>();
@@ -145,12 +134,12 @@ public class MainActivity extends AppCompatActivity {
                 eText.setText("");
             }
         });
-        TextView tv = (TextView) findViewById(R.id.hodnota);
-        tv.setOnClickListener(new View.OnClickListener() {
+        ImageButton ib = (ImageButton) findViewById(R.id.buttonEdit);
+        ib.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EditValueActivity.class);
                 intent.putExtra("mena", zvolenaMena);
                 intent.putExtra("hodnota", zobrazListok.get(zvolenaMena).toString());
                 startActivityForResult(intent, 666);
@@ -338,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                     zvolenaMena = (String) parent.getItemAtPosition(position);
                     Double suma = zobrazListok.get(zvolenaMena);
                     String sb = suma.toString() + " " + zvolenaMena;
-                    ((TextView) findViewById(R.id.hodnota)).setText(sb);
+                    ((TextView) findViewById(R.id.tvHodnota)).setText(sb);
                     if (doCZK) {
                         aktualMenaDo = "CZK";
                         aktualMenaZ = zvolenaMena;
@@ -366,13 +355,22 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
         if (resultCode == 666) {
             try {
-                zobrazListok.remove(data.getStringExtra("mena"));
-                zobrazListok.put(data.getStringExtra("mena"), Double.valueOf( data.getStringExtra("hodnota")));
+                Double orig = zobrazListok.get(data.getStringExtra("mena"));
+                Double navrat = Double.valueOf(data.getStringExtra("hodnota"));
+                Double zmena =  navrat - orig ;
+
+                zobrazListok.put(data.getStringExtra("mena"), zobrazListok.get(data.getStringExtra("mena")) + zmena);
+
+                String sb = zobrazListok.get(data.getStringExtra("mena")).toString()+" "+ data.getStringExtra("mena");
+                ((TextView) findViewById(R.id.tvHodnota)).setText(sb);
+                calc();
+                int i = 0;
             } catch (Exception e) {
             }
         }
