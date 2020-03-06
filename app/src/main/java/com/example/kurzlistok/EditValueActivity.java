@@ -1,15 +1,12 @@
 package com.example.kurzlistok;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +23,7 @@ public class EditValueActivity extends AppCompatActivity {
         assert getSupportActionBar() != null;   //null check
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
 
-        twMena = (TextView) findViewById(R.id.twMena);
+        twMena = (TextView) findViewById(R.id.tvCurrency);
         etHodnota = (EditText)  findViewById(R.id.etHodnota);
         Intent mIntent = getIntent();
         mena = mIntent.getStringExtra("mena");

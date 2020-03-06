@@ -51,8 +51,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private HashMap<String, Double> aktualSavedListok = new HashMap<String, Double>();
-    private HashMap<String, Double> zobrazListok = new HashMap<String, Double>();
+    private HashMap<String, Double> savedExchangeRate = new HashMap<String, Double>();
+    private HashMap<String, Double> showExchangeRate = new HashMap<String, Double>();
     SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd");
     TextView textViewVysledok;
@@ -77,28 +77,28 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        zobrazListok.put("CZK", 1.0);
+        showExchangeRate.put("CZK", 1.0);
         try {
-            aktualSavedListok = loadMap();
+            savedExchangeRate = loadMap();
 
         } catch (Exception e) {
-            aktualSavedListok = zobrazListok;
+            savedExchangeRate = showExchangeRate;
         }
         try {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             String datum = sharedPreferences.getString("datum", "null");
             zobrazDatum = aktualDatum = dateFormat.parse(datum);
-            ((TextView) findViewById(R.id.workingDay)).setText(dateFormat.format(zobrazDatum));
+            ((TextView) findViewById(R.id.tvWorkingDay)).setText(dateFormat.format(zobrazDatum));
         } catch (Exception e) {
         }
 
 
-        setDropdownMenu(zobrazListok);
+        setDropdownMenu(showExchangeRate);
         mQueue = Volley.newRequestQueue(this);
         InputStream in;
 
         context = getApplicationContext();
-        eText = (EditText) findViewById(R.id.editText1);
+        eText = (EditText) findViewById(R.id.etDate);
         eText.setInputType(InputType.TYPE_NULL);
         eText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,14 +141,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), EditValueActivity.class);
                 intent.putExtra("mena", zvolenaMena);
-                intent.putExtra("hodnota", zobrazListok.get(zvolenaMena).toString());
+                intent.putExtra("hodnota", showExchangeRate.get(zvolenaMena).toString());
                 startActivityForResult(intent, 666);
 
             }
         });
-        EditText field1 = (EditText) findViewById(R.id.editTextHodnota);
-        textViewVysledok = (TextView) findViewById(R.id.vysledok);
-        textViewMenaZ = (TextView) findViewById(R.id.menaZ);
+        EditText field1 = (EditText) findViewById(R.id.etInputValue);
+        textViewVysledok = (TextView) findViewById(R.id.tvResul);
+        textViewMenaZ = (TextView) findViewById(R.id.tvCurrencyFrom);
         field1.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -181,12 +181,12 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("datum", dateFormat.format(aktualDatum));
         editor.commit();
-        saveMap(aktualSavedListok);
+        saveMap(savedExchangeRate);
         super.onStop();
     }
 
     private void calc() {
-        String b = ((EditText) findViewById(R.id.editTextHodnota)).getText().toString();
+        String b = ((EditText) findViewById(R.id.etInputValue)).getText().toString();
         calc(Double.parseDouble(b));
     }
 
@@ -195,10 +195,10 @@ public class MainActivity extends AppCompatActivity {
             DecimalFormat df2 = new DecimalFormat("#.##");
             String hodnota;
             if (doCZK) {
-                hodnota = String.valueOf(df2.format(s / zobrazListok.get(zvolenaMena)));
+                hodnota = String.valueOf(df2.format(s / showExchangeRate.get(zvolenaMena)));
                 hodnota = hodnota + " " + aktualMenaDo;
             } else {
-                hodnota = String.valueOf(df2.format(s * zobrazListok.get(zvolenaMena)));
+                hodnota = String.valueOf(df2.format(s * showExchangeRate.get(zvolenaMena)));
                 hodnota = hodnota + " " + aktualMenaDo;
             }
             textViewMenaZ.setText(aktualMenaZ);
@@ -221,25 +221,25 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject rates = response.getJSONObject("rates");
                     Iterator keysToCopyIterator = rates.keys();
-                    zobrazListok.clear();
+                    showExchangeRate.clear();
                     while (keysToCopyIterator.hasNext()) {
                         String key = (String) keysToCopyIterator.next();
-                        zobrazListok.put(key, Double.valueOf(rates.getString(key)));
+                        showExchangeRate.put(key, Double.valueOf(rates.getString(key)));
                     }
                     try {
                         zobrazDatum = dateFormat.parse(response.getString("date"));
                         if (aktualDatum == null || aktualDatum.before(zobrazDatum)) {
                             aktualDatum = zobrazDatum;
-                            aktualSavedListok = zobrazListok;
+                            savedExchangeRate = showExchangeRate;
                         }
 
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
 
-                    setDropdownMenu(zobrazListok);
-                    zvolenaMena = zobrazListok.keySet().toArray()[0].toString();
-                    TextView tw = findViewById(R.id.workingDay);
+                    setDropdownMenu(showExchangeRate);
+                    zvolenaMena = showExchangeRate.keySet().toArray()[0].toString();
+                    TextView tw = findViewById(R.id.tvWorkingDay);
                     tw.setText(dateFormat.format(zobrazDatum));
                     if (doCZK) {
                         aktualMenaDo = "CZK";
@@ -260,11 +260,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Error at games feed", Toast.LENGTH_SHORT).show();
-                zobrazListok = aktualSavedListok;
-                setDropdownMenu(zobrazListok);
-                zvolenaMena = zobrazListok.keySet().toArray()[0].toString();
+                showExchangeRate = savedExchangeRate;
+                setDropdownMenu(showExchangeRate);
+                zvolenaMena = showExchangeRate.keySet().toArray()[0].toString();
                 try {
-                    ((TextView) findViewById(R.id.workingDay)).setText(dateFormat.format(zobrazDatum));
+                    ((TextView) findViewById(R.id.tvWorkingDay)).setText(dateFormat.format(zobrazDatum));
                 } catch (Exception e) {
                 }
                 int i = 0;
@@ -286,22 +286,22 @@ public class MainActivity extends AppCompatActivity {
         boolean checked = ((RadioButton) view).isChecked();
 
         switch (view.getId()) {
-            case R.id.zCZK:
+            case R.id.rbFromCZK:
                 if (checked) {
                     aktualMenaZ = "CZK";
                     textViewMenaZ.setText(aktualMenaZ);
                     aktualMenaDo = zvolenaMena;
-                    ((RadioButton) findViewById(R.id.doCZK)).setChecked(false);
+                    ((RadioButton) findViewById(R.id.rbToCZK)).setChecked(false);
                     doCZK = false;
                     calc();
                 }
                 break;
-            case R.id.doCZK:
+            case R.id.rbToCZK:
                 if (checked) {
                     aktualMenaZ = zvolenaMena;
                     textViewMenaZ.setText(aktualMenaZ);
                     aktualMenaDo = "CZK";
-                    ((RadioButton) findViewById(R.id.zCZK)).setChecked(false);
+                    ((RadioButton) findViewById(R.id.rbFromCZK)).setChecked(false);
                     doCZK = true;
                     calc();
                 }
@@ -311,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDropdownMenu(HashMap<String, Double> source) {
+
         ArrayList<String> spinnerArray = new ArrayList<String>(source.keySet());
         Spinner dropdown = findViewById(R.id.spinner1);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
@@ -325,9 +326,9 @@ public class MainActivity extends AppCompatActivity {
                                        int position, long id) {
                 try {
                     zvolenaMena = (String) parent.getItemAtPosition(position);
-                    Double suma = zobrazListok.get(zvolenaMena);
+                    Double suma = showExchangeRate.get(zvolenaMena);
                     String sb = suma.toString() + " " + zvolenaMena;
-                    ((TextView) findViewById(R.id.tvHodnota)).setText(sb);
+                    ((TextView) findViewById(R.id.tvValue)).setText(sb);
                     if (doCZK) {
                         aktualMenaDo = "CZK";
                         aktualMenaZ = zvolenaMena;
@@ -361,20 +362,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (resultCode == 666) {
             try {
-                Double orig = zobrazListok.get(data.getStringExtra("mena"));
+                Double orig = showExchangeRate.get(data.getStringExtra("mena"));
                 Double navrat = Double.valueOf(data.getStringExtra("hodnota"));
                 Double zmena =  navrat - orig ;
+                showExchangeRate.put(data.getStringExtra("mena"), showExchangeRate.get(data.getStringExtra("mena")) + zmena);
 
-                zobrazListok.put(data.getStringExtra("mena"), zobrazListok.get(data.getStringExtra("mena")) + zmena);
-
-                String sb = zobrazListok.get(data.getStringExtra("mena")).toString()+" "+ data.getStringExtra("mena");
-                ((TextView) findViewById(R.id.tvHodnota)).setText(sb);
+                String sb = showExchangeRate.get(data.getStringExtra("mena")).toString()+" "+ data.getStringExtra("mena");
+                ((TextView) findViewById(R.id.tvValue)).setText(sb);
                 calc();
                 int i = 0;
             } catch (Exception e) {
             }
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

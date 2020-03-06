@@ -31,32 +31,32 @@
                 app:layout_constraintGuide_percent="0.85" />
 
             <TextView
-                android:id="@+id/twDatum"
+                android:id="@+id/tvDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
                 android:gravity="center"
                 android:padding="20dip"
                 android:text="@string/datum"
-                app:layout_constraintBottom_toBottomOf="@id/editText1"
+                app:layout_constraintBottom_toBottomOf="@id/etDate"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
             <EditText
-                android:id="@+id/editText1"
+                android:id="@+id/etDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Vyber dátum"
-                app:layout_constraintBottom_toBottomOf="@+id/twDatum"
+                app:layout_constraintBottom_toBottomOf="@+id/tvDate"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@id/guidelineLeft"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/twKurzZoDna"
+                android:id="@+id/tvRateFromDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -65,21 +65,21 @@
                 android:text="@string/workingDay"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editText1" />
+                app:layout_constraintTop_toBottomOf="@id/etDate" />
 
             <TextView
-                android:id="@+id/workingDay"
+                android:id="@+id/tvWorkingDay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
 
-                app:layout_constraintBottom_toBottomOf="@id/twKurzZoDna"
+                app:layout_constraintBottom_toBottomOf="@id/tvRateFromDay"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toEndOf="@id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@id/editText1" />
+                app:layout_constraintTop_toBottomOf="@id/etDate" />
 
             <TextView
-                android:id="@+id/twMena"
+                android:id="@+id/tvCurrency"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -88,7 +88,7 @@
                 android:text="@string/mena"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/twKurzZoDna" />
+                app:layout_constraintTop_toBottomOf="@id/tvRateFromDay" />
 
 
             <Spinner
@@ -97,13 +97,13 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:spinnerMode="dialog"
-                app:layout_constraintBottom_toBottomOf="@+id/twMena"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCurrency"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@+id/twKurzZoDna" />
+                app:layout_constraintTop_toBottomOf="@+id/tvRateFromDay" />
 
             <TextView
-                android:id="@+id/twCZE"
+                android:id="@+id/tvCZE"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -112,33 +112,33 @@
                 android:text="@string/CZK"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/twMena" />
+                app:layout_constraintTop_toBottomOf="@id/tvCurrency" />
 
             <TextView
-                android:id="@+id/tvHodnota"
+                android:id="@+id/tvValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
                 android:text="@string/_1_czk"
                 android:textColor="#000"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/twCZE"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCZE"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@+id/twMena" />
+                app:layout_constraintTop_toBottomOf="@+id/tvCurrency" />
 
             <ImageButton
                 android:id="@+id/buttonEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/baseline_edit_24"
-                app:layout_constraintBottom_toBottomOf="@+id/twCZE"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCZE"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/guidelineRight"
-                app:layout_constraintTop_toBottomOf="@+id/twMena" />
+                app:layout_constraintTop_toBottomOf="@+id/tvCurrency" />
 
             <TextView
-                android:id="@+id/twPrepocet"
+                android:id="@+id/tvConversion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -148,7 +148,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/twCZE" />
+                app:layout_constraintTop_toBottomOf="@id/tvCZE" />
 
             <RadioGroup
                 android:id="@+id/radioGroup"
@@ -157,10 +157,10 @@
                 android:layout_column="2"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@+id/twCZE">
+                app:layout_constraintTop_toBottomOf="@+id/tvCZE">
 
                 <RadioButton
-                    android:id="@+id/zCZK"
+                    android:id="@+id/rbFromCZK"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="false"
@@ -168,7 +168,7 @@
                     android:text="z CZK" />
 
                 <RadioButton
-                    android:id="@+id/doCZK"
+                    android:id="@+id/rbToCZK"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
@@ -177,7 +177,7 @@
             </RadioGroup>
 
             <TextView
-                android:id="@+id/vysledok"
+                android:id="@+id/tvResul"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
@@ -200,10 +200,10 @@
                 android:text="@string/hodnota"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vysledok" />
+                app:layout_constraintTop_toBottomOf="@+id/tvResul" />
 
             <EditText
-                android:id="@+id/editTextHodnota"
+                android:id="@+id/etInputValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -211,20 +211,20 @@
                 android:text="0"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toEndOf="@id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@+id/vysledok" />
+                app:layout_constraintTop_toBottomOf="@+id/tvResul" />
 
             <TextView
-                android:id="@+id/menaZ"
+                android:id="@+id/tvCurrencyFrom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="3"
                 android:gravity="center"
                 android:text="CZK"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextHodnota"
+                app:layout_constraintBottom_toBottomOf="@+id/etInputValue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guidelineRight"
-                app:layout_constraintTop_toTopOf="@+id/editTextHodnota" />
+                app:layout_constraintTop_toTopOf="@+id/etInputValue" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
