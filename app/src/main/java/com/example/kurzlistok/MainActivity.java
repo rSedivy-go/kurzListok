@@ -364,10 +364,10 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Double orig = showExchangeRate.get(data.getStringExtra("mena"));
                 Double navrat = Double.valueOf(data.getStringExtra("hodnota"));
-                Double zmena =  navrat - orig ;
+                Double zmena = navrat - orig;
                 showExchangeRate.put(data.getStringExtra("mena"), showExchangeRate.get(data.getStringExtra("mena")) + zmena);
 
-                String sb = showExchangeRate.get(data.getStringExtra("mena")).toString()+" "+ data.getStringExtra("mena");
+                String sb = showExchangeRate.get(data.getStringExtra("mena")).toString() + " " + data.getStringExtra("mena");
                 ((TextView) findViewById(R.id.tvValue)).setText(sb);
                 calc();
                 int i = 0;
@@ -386,10 +386,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.about) {
+            startActivityForResult(new Intent(getApplicationContext(), AboutActivity.class), 1);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
