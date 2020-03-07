@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
-        android:id="@+id/etHodnota"
+        android:id="@+id/etValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -57,10 +57,10 @@
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/tvCurrency" />
     <Button
-        android:id="@+id/buttonNastaHodnotu"
+        android:id="@+id/bSetValue"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@+id/etHodnota"
+        app:layout_constraintTop_toBottomOf="@+id/etValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nastav"/>

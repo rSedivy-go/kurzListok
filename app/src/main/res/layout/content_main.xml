@@ -128,7 +128,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvCurrency" />
 
             <ImageButton
-                android:id="@+id/buttonEdit"
+                android:id="@+id/ibEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/baseline_edit_24"
@@ -177,7 +177,7 @@
             </RadioGroup>
 
             <TextView
-                android:id="@+id/tvResul"
+                android:id="@+id/tvResult"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_column="2"
@@ -200,7 +200,7 @@
                 android:text="@string/hodnota"
                 app:layout_constraintEnd_toStartOf="@id/guidelineLeft"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvResul" />
+                app:layout_constraintTop_toBottomOf="@+id/tvResult" />
 
             <EditText
                 android:id="@+id/etInputValue"
@@ -211,7 +211,7 @@
                 android:text="0"
                 app:layout_constraintEnd_toStartOf="@id/guidelineRight"
                 app:layout_constraintStart_toEndOf="@id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@+id/tvResul" />
+                app:layout_constraintTop_toBottomOf="@+id/tvResult" />
 
             <TextView
                 android:id="@+id/tvCurrencyFrom"

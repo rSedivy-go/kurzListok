@@ -38,7 +38,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,21 +52,21 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private HashMap<String, Double> savedExchangeRate = new HashMap<String, Double>();
     private HashMap<String, Double> showExchangeRate = new HashMap<String, Double>();
-    SimpleDateFormat dateFormat = new SimpleDateFormat(
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd");
-    TextView textViewVysledok;
-    TextView textViewMenaZ;
-    String zvolenaMena = "CZK";
-    String aktualMenaZ = "CZK";
-    String aktualMenaDo = "CZK";
-    Date aktualDatum;
-    Date zobrazDatum;
+    TextView tvResult;
+    TextView tvCurrencyFrom;
+    String selectedCurrency = "CZK";
+    String actualCurrencyFrom = "CZK";
+    String actualCurrencyTo = "CZK";
+    Date dateActual;
+    Date dateShowing;
     SharedPreferences sharedPreferences;
     private RequestQueue mQueue;
     DatePickerDialog picker;
-    EditText eText;
+    EditText etDate;
     Context context;
-    boolean doCZK = true;
+    boolean toCZK = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,31 +75,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         showExchangeRate.put("CZK", 1.0);
         try {
             savedExchangeRate = loadMap();
-
         } catch (Exception e) {
             savedExchangeRate = showExchangeRate;
         }
         try {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String datum = sharedPreferences.getString("datum", "null");
-            zobrazDatum = aktualDatum = dateFormat.parse(datum);
-            ((TextView) findViewById(R.id.tvWorkingDay)).setText(dateFormat.format(zobrazDatum));
+            String date = sharedPreferences.getString("datum", "null");
+            dateShowing = dateActual = simpleDateFormat.parse(date);
+            ((TextView) findViewById(R.id.tvWorkingDay)).setText(simpleDateFormat.format(dateShowing));
         } catch (Exception e) {
         }
 
-
         setDropdownMenu(showExchangeRate);
         mQueue = Volley.newRequestQueue(this);
-        InputStream in;
 
         context = getApplicationContext();
-        eText = (EditText) findViewById(R.id.etDate);
-        eText.setInputType(InputType.TYPE_NULL);
-        eText.setOnClickListener(new View.OnClickListener() {
+        etDate = (EditText) findViewById(R.id.etDate);
+        etDate.setInputType(InputType.TYPE_NULL);
+        etDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Calendar cldr = Calendar.getInstance();
@@ -119,37 +114,37 @@ public class MainActivity extends AppCompatActivity {
                                         (dayOfMonth < 10 ?
                                                 String.format(Locale.getDefault(), "%02d", dayOfMonth) :
                                                 dayOfMonth);
-                                eText.setText(datum);
-                                jsonParse(datum);
+                                etDate.setText(datum);
+                                apiHandle(datum);
                             }
                         }, year, month, day);
                 picker.show();
             }
         });
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                jsonParse("latest");
-                eText.setText("");
+                apiHandle("latest");
+                etDate.setText("");
             }
         });
-        ImageButton ib = (ImageButton) findViewById(R.id.buttonEdit);
-        ib.setOnClickListener(new View.OnClickListener() {
+
+        ((ImageButton) findViewById(R.id.ibEdit)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), EditValueActivity.class);
-                intent.putExtra("mena", zvolenaMena);
-                intent.putExtra("hodnota", showExchangeRate.get(zvolenaMena).toString());
+                intent.putExtra("mena", selectedCurrency);
+                intent.putExtra("hodnota", showExchangeRate.get(selectedCurrency).toString());
                 startActivityForResult(intent, 666);
-
             }
         });
-        EditText field1 = (EditText) findViewById(R.id.etInputValue);
-        textViewVysledok = (TextView) findViewById(R.id.tvResul);
-        textViewMenaZ = (TextView) findViewById(R.id.tvCurrencyFrom);
-        field1.addTextChangedListener(new TextWatcher() {
+
+        tvResult = (TextView) findViewById(R.id.tvResult);
+        tvCurrencyFrom = (TextView) findViewById(R.id.tvCurrencyFrom);
+        ((EditText) findViewById(R.id.etInputValue)).addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -167,19 +162,19 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         calc(Double.parseDouble(s.toString()));
                     } catch (Exception e) {
-                        textViewVysledok.setText("Vyskytla sa chyba");
+                        tvResult.setText("Vyskytla sa chyba");
                     }
             }
         });
 
-        jsonParse("latest");
+        apiHandle("latest");
     }
 
     @Override
     protected void onStop() {
         mQueue.getCache().clear();
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("datum", dateFormat.format(aktualDatum));
+        editor.putString("datum", simpleDateFormat.format(dateActual));
         editor.commit();
         saveMap(savedExchangeRate);
         super.onStop();
@@ -192,27 +187,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void calc(Double s) {
         try {
-            DecimalFormat df2 = new DecimalFormat("#.##");
-            String hodnota;
-            if (doCZK) {
-                hodnota = String.valueOf(df2.format(s / showExchangeRate.get(zvolenaMena)));
-                hodnota = hodnota + " " + aktualMenaDo;
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            String value;
+            if (toCZK) {
+                value = String.valueOf(decimalFormat.format(s / showExchangeRate.get(selectedCurrency)));
             } else {
-                hodnota = String.valueOf(df2.format(s * showExchangeRate.get(zvolenaMena)));
-                hodnota = hodnota + " " + aktualMenaDo;
+                value = String.valueOf(decimalFormat.format(s * showExchangeRate.get(selectedCurrency)));
             }
-            textViewMenaZ.setText(aktualMenaZ);
-            textViewVysledok.setText(hodnota);
-
+            value = value + " " + actualCurrencyTo;
+            tvCurrencyFrom.setText(actualCurrencyFrom);
+            tvResult.setText(value);
         } catch (Exception e) {
-            textViewVysledok.setText("Error");
+            tvResult.setText("Error");
         }
-
     }
 
-    private void jsonParse(String url) {
-        //2010-01-13
-        //latest
+    private void apiHandle(String url) {
+        /*
+        url in format -> latest or 2010-01-13
+         */
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
                 "https://api.exchangeratesapi.io/" + url + "?base=CZK",
                 null, new Response.Listener<JSONObject>() {
@@ -227,9 +220,9 @@ public class MainActivity extends AppCompatActivity {
                         showExchangeRate.put(key, Double.valueOf(rates.getString(key)));
                     }
                     try {
-                        zobrazDatum = dateFormat.parse(response.getString("date"));
-                        if (aktualDatum == null || aktualDatum.before(zobrazDatum)) {
-                            aktualDatum = zobrazDatum;
+                        dateShowing = simpleDateFormat.parse(response.getString("date"));
+                        if (dateActual == null || dateActual.before(dateShowing)) {
+                            dateActual = dateShowing;
                             savedExchangeRate = showExchangeRate;
                         }
 
@@ -238,42 +231,39 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     setDropdownMenu(showExchangeRate);
-                    zvolenaMena = showExchangeRate.keySet().toArray()[0].toString();
-                    TextView tw = findViewById(R.id.tvWorkingDay);
-                    tw.setText(dateFormat.format(zobrazDatum));
-                    if (doCZK) {
-                        aktualMenaDo = "CZK";
-                        aktualMenaZ = zvolenaMena;
+                    selectedCurrency = showExchangeRate.keySet().toArray()[0].toString();
+                    ((TextView) findViewById(R.id.tvWorkingDay)).setText(simpleDateFormat.format(dateShowing));
+                    if (toCZK) {
+                        actualCurrencyTo = "CZK";
+                        actualCurrencyFrom = selectedCurrency;
                     } else {
-                        aktualMenaDo = zvolenaMena;
-                        aktualMenaZ = "CZK";
+                        actualCurrencyTo = selectedCurrency;
+                        actualCurrencyFrom = "CZK";
                     }
                     calc();
-                    Toast.makeText(getApplicationContext(), "loaded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Kurzové lístky prevzaté", Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error at games feed", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "Chyba pri preberaní lístkov", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error at games feed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Chyba pri preberaní lístkov", Toast.LENGTH_SHORT).show();
                 showExchangeRate = savedExchangeRate;
                 setDropdownMenu(showExchangeRate);
-                zvolenaMena = showExchangeRate.keySet().toArray()[0].toString();
+                selectedCurrency = showExchangeRate.keySet().toArray()[0].toString();
                 try {
-                    ((TextView) findViewById(R.id.tvWorkingDay)).setText(dateFormat.format(zobrazDatum));
+                    ((TextView) findViewById(R.id.tvWorkingDay)).setText(simpleDateFormat.format(dateShowing));
                 } catch (Exception e) {
                 }
-                int i = 0;
-                if (doCZK) {
-                    aktualMenaDo = "CZK";
-                    aktualMenaZ = zvolenaMena;
+                if (toCZK) {
+                    actualCurrencyTo = "CZK";
+                    actualCurrencyFrom = selectedCurrency;
                 } else {
-                    aktualMenaDo = zvolenaMena;
-                    aktualMenaZ = "CZK";
+                    actualCurrencyTo = selectedCurrency;
+                    actualCurrencyFrom = "CZK";
                 }
                 calc();
                 error.printStackTrace();
@@ -288,21 +278,21 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.rbFromCZK:
                 if (checked) {
-                    aktualMenaZ = "CZK";
-                    textViewMenaZ.setText(aktualMenaZ);
-                    aktualMenaDo = zvolenaMena;
+                    actualCurrencyFrom = "CZK";
+                    tvCurrencyFrom.setText(actualCurrencyFrom);
+                    actualCurrencyTo = selectedCurrency;
                     ((RadioButton) findViewById(R.id.rbToCZK)).setChecked(false);
-                    doCZK = false;
+                    toCZK = false;
                     calc();
                 }
                 break;
             case R.id.rbToCZK:
                 if (checked) {
-                    aktualMenaZ = zvolenaMena;
-                    textViewMenaZ.setText(aktualMenaZ);
-                    aktualMenaDo = "CZK";
+                    actualCurrencyFrom = selectedCurrency;
+                    tvCurrencyFrom.setText(actualCurrencyFrom);
+                    actualCurrencyTo = "CZK";
                     ((RadioButton) findViewById(R.id.rbFromCZK)).setChecked(false);
-                    doCZK = true;
+                    toCZK = true;
                     calc();
                 }
 
@@ -311,36 +301,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDropdownMenu(HashMap<String, Double> source) {
-
         ArrayList<String> spinnerArray = new ArrayList<String>(source.keySet());
-        Spinner dropdown = findViewById(R.id.spinner1);
+        Spinner spinnerDropdown = findViewById(R.id.spinner1);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-                (getApplicationContext(), android.R.layout.simple_spinner_dropdown_item,
+                (getApplicationContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
                         spinnerArray);
 
-        dropdown.setAdapter(spinnerArrayAdapter);
-
-        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerDropdown.setAdapter(spinnerArrayAdapter);
+        spinnerDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 try {
-                    zvolenaMena = (String) parent.getItemAtPosition(position);
-                    Double suma = showExchangeRate.get(zvolenaMena);
-                    String sb = suma.toString() + " " + zvolenaMena;
+                    selectedCurrency = (String) parent.getItemAtPosition(position);
+                    Double value = showExchangeRate.get(selectedCurrency);
+                    String sb = value.toString() + " " + selectedCurrency;
                     ((TextView) findViewById(R.id.tvValue)).setText(sb);
-                    if (doCZK) {
-                        aktualMenaDo = "CZK";
-                        aktualMenaZ = zvolenaMena;
+                    if (toCZK) {
+                        actualCurrencyTo = "CZK";
+                        actualCurrencyFrom = selectedCurrency;
                     } else {
-                        aktualMenaDo = zvolenaMena;
-                        aktualMenaZ = "CZK";
+                        actualCurrencyTo = selectedCurrency;
+                        actualCurrencyFrom = "CZK";
                     }
                     calc();
                 } catch (Exception e) {
-
                 }
-
             }
 
             @Override

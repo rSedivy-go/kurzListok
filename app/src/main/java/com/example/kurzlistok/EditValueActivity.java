@@ -11,10 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditValueActivity extends AppCompatActivity {
-    String mena;
-    Double hodnota;
-    TextView twMena;
-    EditText etHodnota;
+    String currency;
+    Double value;
+    TextView tvCurrency;
+    EditText etValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,23 +23,22 @@ public class EditValueActivity extends AppCompatActivity {
         assert getSupportActionBar() != null;   //null check
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
 
-        twMena = (TextView) findViewById(R.id.tvCurrency);
-        etHodnota = (EditText)  findViewById(R.id.etHodnota);
+        tvCurrency = (TextView) findViewById(R.id.tvCurrency);
+        etValue = (EditText)  findViewById(R.id.etValue);
         Intent mIntent = getIntent();
-        mena = mIntent.getStringExtra("mena");
-        twMena.setText(mena);
+        currency = mIntent.getStringExtra("mena");
+        tvCurrency.setText(currency);
         try {
-            hodnota = Double.valueOf(mIntent.getStringExtra("hodnota"));
+            value = Double.valueOf(mIntent.getStringExtra("hodnota"));
         } catch (Exception e) {
-            hodnota = 0.0;
+            value = 0.0;
         }
-        etHodnota.setText(hodnota.toString());
-        Button button = (Button) findViewById(R.id.buttonNastaHodnotu);
-        button.setOnClickListener(new View.OnClickListener() {
+        etValue.setText(value.toString());
+        ((Button) findViewById(R.id.bSetValue)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    hodnota = Double.valueOf(etHodnota.getText().toString());
+                    value = Double.valueOf(etValue.getText().toString());
                     Toast.makeText(getApplicationContext(), "Uložené", Toast.LENGTH_SHORT).show();
                 }catch (Exception e){
                     Toast.makeText(getApplicationContext(), "Chyba v hodnote", Toast.LENGTH_SHORT).show();
@@ -49,8 +48,8 @@ public class EditValueActivity extends AppCompatActivity {
     }
     public void returnCall(){
         Intent intent = new Intent();
-        intent.putExtra("mena", mena);
-        intent.putExtra("hodnota", hodnota.toString());
+        intent.putExtra("mena", currency);
+        intent.putExtra("hodnota", value.toString());
         setResult(666, intent);
         finish();
     }
